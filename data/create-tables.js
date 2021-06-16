@@ -20,7 +20,7 @@ async function run() {
                 CREATE TABLE meals (
                     id SERIAL PRIMARY KEY NOT NULL,
                     name VARCHAR(512) NOT NULL,
-                    in_stock BOOLEAN NOT NULL,
+                    in_stock BOOLEAN,
                     description VARCHAR(512) NOT NULL,
                     category VARCHAR(512) NOT NULL,
                     difficulty VARCHAR(512) NOT NULL,
