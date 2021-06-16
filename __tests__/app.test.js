@@ -6,6 +6,79 @@ const fakeRequest = require('supertest');
 const app = require('../lib/app');
 const client = require('../lib/client');
 
+const meals = [
+  {
+    id: 1,
+    name: 'Chicken Enchiladas',
+    in_stock: true,
+    description: 'Blue corn tortillas with pulled chicken, chile verde sauce, cotija cheese, and fresh cilantro',
+    category: 'Mexican',
+    difficulty: 'easy',
+    price: 10,
+    owner_id: 1
+  },
+  {
+    id: 2,
+    name: 'Spaghetti with Pork Meatballs',
+    in_stock: false,
+    description: 'Handmade spaghetti noodles with classic red sauce, pork meatball kit, fresh basil, and parmigiano reggiano',
+    category: 'Italian',
+    difficulty: 'medium',
+    price: 12,
+    owner_id: 1
+  },
+  {
+    id: 3,
+    name: 'Bison Cheeseburgers',
+    in_stock: true,
+    description: 'Grass fed bison patties with brioche buns, smoked gouda cheese, and quick pickle kit',
+    category: 'American',
+    difficulty: 'medium',
+    price: 20,
+    owner_id: 1
+  },
+  {
+    id: 4,
+    name: 'Spicy Shoyu Ramen',
+    in_stock: false,
+    description: 'Gourmet Instant Ramen kit with pork belly, chili oil, and eggs',
+    category: 'Japanese',
+    difficulty: 'hard',
+    price: 20,
+    owner_id: 1
+  },
+  {
+    id: 5,
+    name: 'Spicy Tuna Rolls',
+    in_stock: true,
+    description: 'Sushi rolling kit (includes bamboo mat), albacore belly tuna, rice, nori, hot sauce, black sesame seeds, scallions',
+    category: 'Japanese',
+    difficulty: 'hard',
+    price: 25,
+    owner_id: 1
+  },
+  {
+    id: 6,
+    name: 'Pepperoni Pizza',
+    in_stock: true,
+    description: 'Detroit style deep dish pizza, includes dough kit, sauce, buffalo mozzarella, and aged pepperoni',
+    category: 'American/Italian',
+    difficulty: 'easy',
+    price: 12,
+    owner_id: 1
+  },
+  {
+    id: 7,
+    name: 'Veggie Tacos',
+    in_stock: false,
+    description: 'Corn tortillas, fire-roasted salsa, zuchinni, nopalitos, mushrooms, lime, and fresh cilantro',
+    category: 'Mexican',
+    difficulty: 'medium',
+    price: 10,
+    owner_id: 1
+  }
+];
+
 describe('app routes', () => {
   describe('routes', () => {
     let token;
@@ -31,35 +104,38 @@ describe('app routes', () => {
       return client.end(done);
     });
 
-    test('returns animals', async() => {
+    test('/GET meals returns all meals', async() => {
 
-      const expectation = [
-        {
-          'id': 1,
-          'name': 'bessie',
-          'coolfactor': 3,
-          'owner_id': 1
-        },
-        {
-          'id': 2,
-          'name': 'jumpy',
-          'coolfactor': 4,
-          'owner_id': 1
-        },
-        {
-          'id': 3,
-          'name': 'spot',
-          'coolfactor': 10,
-          'owner_id': 1
-        }
-      ];
+      const expectation = meals;
 
       const data = await fakeRequest(app)
-        .get('/animals')
+        .get('/meals')
         .expect('Content-Type', /json/)
         .expect(200);
 
       expect(data.body).toEqual(expectation);
     });
+
+    test('/GET meals/3 returns a single meal', async() => {
+
+      const expectation = {
+        id: 3,
+        name: 'Bison Cheeseburgers',
+        in_stock: true,
+        description: 'Grass fed bison patties with brioche buns, smoked gouda cheese, and quick pickle kit',
+        category: 'American',
+        difficulty: 'medium',
+        price: 20,
+        owner_id: 1
+      };
+
+      const data = await fakeRequest(app)
+        .get('/meals/3')
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(data.body).toEqual(expectation);
+    });
+
   });
 });
