@@ -106,7 +106,7 @@ describe('app routes', () => {
 
     test('/GET meals returns all meals', async() => {
 
-      const expectation = meals
+      const expectation = meals;
 
       const data = await fakeRequest(app)
         .get('/meals')
@@ -115,5 +115,27 @@ describe('app routes', () => {
 
       expect(data.body).toEqual(expectation);
     });
+
+    test('/GET meals/3 returns a single meal', async() => {
+
+      const expectation = {
+        id: 3,
+        name: 'Bison Cheeseburgers',
+        in_stock: true,
+        description: 'Grass fed bison patties with brioche buns, smoked gouda cheese, and quick pickle kit',
+        category: 'American',
+        difficulty: 'medium',
+        price: 20,
+        owner_id: 1
+      };
+
+      const data = await fakeRequest(app)
+        .get('/meals/3')
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(data.body).toEqual(expectation);
+    });
+
   });
 });
