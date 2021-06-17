@@ -139,3 +139,42 @@ describe('app routes', () => {
 
   });
 });
+
+test('/POST meals creates a single meal', async() => {
+
+  // makes a request to create new meal
+  const data = await fakeRequest(app)
+    .post('/meals')
+    .send({
+      name: 'new meal',
+      in_stock: true,
+      description: 'new description',
+      category: 'new category',
+      difficulty: 'easy',
+      price: 10
+    })
+    .expect('Content-Type', /json/)
+    .expect(200);
+
+  // makes a request to see all meals
+  const dataMeal = await fakeRequest(app)
+    .get('/meals')
+    .expect('Content-Type', /json/)
+    .expect(200);
+
+  const newMeal = { 
+    'id': 8,
+    'name': 'new meal',
+    'in_stock': true,
+    'description': 'new description',
+    'category': 'new category',
+    'difficulty': 'easy',
+    'price': 10,
+    'owner_id': 1,
+  };
+
+  // checks that the post request responds with the new meal
+  expect(data.body).toEqual(newMeal);
+  // checks that the get request contians the new meal
+  expect(dataMeal.body).toContainEqual(newMeal);
+});
