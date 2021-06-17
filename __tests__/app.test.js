@@ -211,10 +211,39 @@ describe('app routes', () => {
         'owner_id': 1,
       };
         
-      // check that the put request responds with the new board game
+      // checks that the put request responds with the meal
       expect(data.body).toEqual(updatedMeal);
-      // check that the get request contians the new board game
+      // checks that the get request contians the new meal
       expect(dataMeals.body).toContainEqual(updatedMeal);
+    });
+
+    test('/DELETE meals deletes a single meal object', async() => {
+
+      // makes a request to delete a single meal
+      await fakeRequest(app)
+        .delete('/meals/2')
+        .expect('Content-Type', /json/)
+        .expect(200);
+    
+      // makes a request to see all meals
+      const dataMeals = await fakeRequest(app)
+        .get('/meals')
+        .expect('Content-Type', /json/)
+        .expect(200);
+    
+      const deletedMeal = { 
+        'id': 2,
+        'name': 'new meal',
+        'in_stock': true,
+        'description': 'new description',
+        'category': 'new category',
+        'difficulty': 'easy',
+        'price': 10,
+        'owner_id': 1,
+      };
+          
+      // checks that the get request does not contian the deleted meal
+      expect(dataMeals.body).not.toContainEqual(deletedMeal);
     });
 
   });
