@@ -137,5 +137,114 @@ describe('app routes', () => {
       expect(data.body).toEqual(expectation);
     });
 
+    
+    test('/POST meals creates a single meal', async() => {
+    
+      // makes a request to create new meal
+      const data = await fakeRequest(app)
+        .post('/meals')
+        .send({
+          name: 'new meal',
+          in_stock: true,
+          description: 'new description',
+          category: 'new category',
+          difficulty: 'easy',
+          price: 10
+        })
+    
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      // makes a request to see all meals
+      const dataMeal = await fakeRequest(app)
+        .get('/meals')
+        .expect('Content-Type', /json/)
+        .expect(200);
+      
+      const newMeal = { 
+        'id': 8,
+        'name': 'new meal',
+        'in_stock': true,
+        'description': 'new description',
+        'category': 'new category',
+        'difficulty': 'easy',
+        'price': 10,
+        'owner_id': 1,
+      };
+      
+      // checks that the post request responds with the new meal
+      expect(data.body).toEqual(newMeal);
+      // checks that the get request contians the new meal
+      expect(dataMeal.body).toContainEqual(newMeal);
+    }, 10000);
+
+    test('/PUT meals updates a single meal', async() => {
+
+      // makes a request to update the meal object
+      const data = await fakeRequest(app)
+        .put('/meals/3')
+        .send({
+          name: 'new meal',
+          in_stock: true,
+          description: 'new description',
+          category: 'new category',
+          difficulty: 'easy',
+          price: 10
+        })
+        .expect('Content-Type', /json/)
+        .expect(200);
+  
+      // makes a request to see all meals
+      const dataMeals = await fakeRequest(app)
+        .get('/meals')
+        .expect('Content-Type', /json/)
+        .expect(200);
+  
+      const updatedMeal = { 
+        'id': 3,
+        'name': 'new meal',
+        'in_stock': true,
+        'description': 'new description',
+        'category': 'new category',
+        'difficulty': 'easy',
+        'price': 10,
+        'owner_id': 1,
+      };
+        
+      // checks that the put request responds with the meal
+      expect(data.body).toEqual(updatedMeal);
+      // checks that the get request contians the new meal
+      expect(dataMeals.body).toContainEqual(updatedMeal);
+    });
+
+    test('/DELETE meals deletes a single meal object', async() => {
+
+      // makes a request to delete a single meal
+      await fakeRequest(app)
+        .delete('/meals/2')
+        .expect('Content-Type', /json/)
+        .expect(200);
+    
+      // makes a request to see all meals
+      const dataMeals = await fakeRequest(app)
+        .get('/meals')
+        .expect('Content-Type', /json/)
+        .expect(200);
+    
+      const deletedMeal = { 
+        'id': 2,
+        'name': 'new meal',
+        'in_stock': true,
+        'description': 'new description',
+        'category': 'new category',
+        'difficulty': 'easy',
+        'price': 10,
+        'owner_id': 1,
+      };
+          
+      // checks that the get request does not contian the deleted meal
+      expect(dataMeals.body).not.toContainEqual(deletedMeal);
+    });
+
   });
 });
