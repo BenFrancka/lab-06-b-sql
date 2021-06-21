@@ -137,6 +137,8 @@ describe('app routes', () => {
       expect(data.body).toEqual(expectation);
     });
 
+    test('/GET categories returns all categories', async)
+
     
     test('/POST meals creates a single meal', async() => {
     
