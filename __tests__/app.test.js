@@ -83,6 +83,7 @@ const meals = [
 describe('app routes', () => {
   describe('routes', () => {
     let token;
+    let categories;
   
     beforeAll(async done => {
       execSync('npm run setup-db');
@@ -97,6 +98,9 @@ describe('app routes', () => {
         });
       
       token = signInData.body.token; // eslint-disable-line
+
+      const categoryData = await fakeRequest(app).get('/categories');
+      categories = categoryData.body;
   
       return done();
     });
@@ -114,7 +118,7 @@ describe('app routes', () => {
         .expect('Content-Type', /json/)
         .expect(200);
 
-      expect(data.body).toEqual(expectation);
+      expect(data.body).toEqual(expect.arrayContaining(expectation));
     });
 
     test('/GET meals/3 returns a single meal', async() => {
