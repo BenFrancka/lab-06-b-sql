@@ -5,6 +5,7 @@ const { execSync } = require('child_process');
 const fakeRequest = require('supertest');
 const app = require('../lib/app');
 const client = require('../lib/client');
+const { getCategoryIdByName } = require('../lib/utils.js');
 
 const meals = [
   {
@@ -137,11 +138,21 @@ describe('app routes', () => {
       expect(data.body).toEqual(expectation);
     });
 
-    test('/GET categories returns all categories', async)
+    test('/GET categories returns all categories', async() => {
+
+      const data = await fakeRequest(app)
+        .get('/categories')
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(data.body.length).toBeGreaterThan(0);
+    });
 
     
     test('/POST meals creates a single meal', async() => {
     
+      const category_id = getCategoryIdByName(categories, 'American');
+
       // makes a request to create new meal
       const data = await fakeRequest(app)
         .post('/meals')
@@ -149,7 +160,7 @@ describe('app routes', () => {
           name: 'new meal',
           in_stock: true,
           description: 'new description',
-          category: 'new category',
+          category_id: category_id,
           difficulty: 'easy',
           price: 10
         })
@@ -163,25 +174,37 @@ describe('app routes', () => {
         .expect('Content-Type', /json/)
         .expect(200);
       
+      const postedMeal = {
+        'id': 8,
+        'name': 'new meal',
+        'in_stock': true,
+        'description': 'new description',
+        'category_id': category_id,
+        'difficulty': 'easy',
+        'price': 10,
+        'owner_id': 1,
+      };
+      
       const newMeal = { 
         'id': 8,
         'name': 'new meal',
         'in_stock': true,
         'description': 'new description',
-        'category': 'new category',
+        'category': 'American',
         'difficulty': 'easy',
         'price': 10,
         'owner_id': 1,
       };
       
       // checks that the post request responds with the new meal
-      expect(data.body).toEqual(newMeal);
+      expect(data.body).toEqual(postedMeal);
       // checks that the get request contians the new meal
       expect(dataMeal.body).toContainEqual(newMeal);
     }, 10000);
 
     test('/PUT meals updates a single meal', async() => {
 
+      const category_id = getCategoryIdByName(categories, 'Mexican');
       // makes a request to update the meal object
       const data = await fakeRequest(app)
         .put('/meals/3')
@@ -189,7 +212,7 @@ describe('app routes', () => {
           name: 'new meal',
           in_stock: true,
           description: 'new description',
-          category: 'new category',
+          category_id: category_id,
           difficulty: 'easy',
           price: 10
         })
@@ -201,20 +224,31 @@ describe('app routes', () => {
         .get('/meals')
         .expect('Content-Type', /json/)
         .expect(200);
+      
+      const putMeal = {
+        'id': 3,
+        'name': 'new meal',
+        'in_stock': true,
+        'description': 'new description',
+        'category_id': category_id,
+        'difficulty': 'easy',
+        'price': 10,
+        'owner_id': 1,
+      };
   
       const updatedMeal = { 
         'id': 3,
         'name': 'new meal',
         'in_stock': true,
         'description': 'new description',
-        'category': 'new category',
+        'category': 'Mexican',
         'difficulty': 'easy',
         'price': 10,
         'owner_id': 1,
       };
         
       // checks that the put request responds with the meal
-      expect(data.body).toEqual(updatedMeal);
+      expect(data.body).toEqual(putMeal);
       // checks that the get request contians the new meal
       expect(dataMeals.body).toContainEqual(updatedMeal);
     });
